@@ -9,7 +9,7 @@ Please also notice that:
 4. All papers or publicly available text using the EDDFS database are expected to cite the following paper:   
 
 ```
-@inproceedings{,  
+@inproceedings{9949547,  
   author       = {Xue Xia and  
                   Kun Zhan and  
                   Ying Li and  
@@ -19,7 +19,7 @@ Please also notice that:
                   Guofu Huang and  
                   Yuming Fang},  
   title        = {Eye Disease Diagnosis and Fundus Synthesis: {A} Large-Scale Dataset and Benchmark},  
-  booktitle    = {24th {IEEE} International Workshop on Multimedia Signal Processing, {MMSP} 2022, Shanghai, China, September 26-28, 2022},
+  booktitle    = {2022 IEEE 24th International Workshop on Multimedia Signal Processing (MMSP), Shanghai, China, September 26-28, 2022},
   pages        = {1--6},  
   publisher    = {{IEEE}},  
   year         = {2022},  
