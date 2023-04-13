@@ -1,5 +1,6 @@
 # EDDFS_dataset
-## a retinal fundus dataset for eye disease diagnosis and fundus synthesis
+## a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
+### EDDFS contains 28877 color fundus images for deep learning-based diagnosis. Except for 15000 healthy samples, the dataset consists of 8 eye disorders including diabetic retinopathy, agerelated macular degeneration, glaucoma, pathological myopia, hypertension, retinal vein occlusion, LASIK spot and others. 
 
 Once you decide to involve this dataset, you must agree to this Data Download Consent. By doing so, you accept all the risks of getting your full dataset.  
 Please also notice that:  
