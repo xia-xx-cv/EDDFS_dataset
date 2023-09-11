@@ -28,4 +28,4 @@ Please also notice that:
 }  
 ```
 
-5. The dataset can be downloaded through (GoogleDrive_Link)[https://drive.google.com/drive/folders/1zsRnZm_PE0uvNex7NMQgT_8acOIuCZXx?usp=sharing] or (Mega_Link)[https://mega.nz/folder/Ep9GhY4B#WyqV8WBOxNRMORpza6Cigw].
+5. The dataset can be downloaded through (https://drive.google.com/drive/folders/1zsRnZm_PE0uvNex7NMQgT_8acOIuCZXx?usp=sharing)[GoogleDrive_Link] or (https://mega.nz/folder/Ep9GhY4B#WyqV8WBOxNRMORpza6Cigw)[Mega_Link].
