@@ -9,7 +9,7 @@ Please also notice that:
 3. You agree not to further copy, publish or distribute any portion of the EDDFS database.  
 4. All papers or publicly available text using the EDDFS database are expected to cite the following paper(s):   
 
-=========================== conference mmsp2022 ===============================
+=========================== conference: mmsp2022 ===============================
 ```
 @inproceedings{9949547,  
   author       = {Xue Xia and  
@@ -29,6 +29,7 @@ Please also notice that:
 }  
 ```
 ========================== journal: spic ================================
+
 The updated network is published online with the trained model available on mega drive : [multi-label_multi-disease](https://mega.nz/folder/R8UWFALB#qWSSJB6ToQOT6XLEWOohLA), [single-label_multi-disease](https://mega.nz/folder/ZwlhjTCb#j2tIDQuAUMMhGawjTwiAZw) and [single-label_single-disease](https://mega.nz/folder/Aw1ikRIY#pjZ_znNf70IHfk3Tveb-bQ).
 The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (parallelnet_v2).
 
