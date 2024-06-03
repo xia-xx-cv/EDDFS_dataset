@@ -50,4 +50,50 @@ author = {Xue Xia and Ying Li and Guobei Xiao and Kun Zhan and Jinhua Yan and Ch
 
 5. The dataset can be downloaded through [GoogleDrive_Link](https://drive.google.com/drive/folders/1zsRnZm_PE0uvNex7NMQgT_8acOIuCZXx?usp=drive_link), [Mega_Link](https://mega.nz/folder/Ep9GhY4B#WyqV8WBOxNRMORpza6Cigw) or [Baiduyun_Link](https://pan.baidu.com/s/1XOQAg4-Xlf41VanYOtKYpQ?pwd=qkds) with pw: qkds.
 
-6. We are organizing the source code and will publish the code ASAP.
+# Running the CoAtt Net
+## Before running
+Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
+You can download pretrained weights and put them into ImageNet ./pre-trained/ImageNet/
+'''
+// for resnet:
+     https://download.pytorch.org/models/resnet18-5c106cde.pth
+// for densenet
+     https://download.pytorch.org/models/densenet121-a639ec97.pth
+// for efficientnet
+     run pre-trained/a_tools/trans_weights_to_pytorch.py to transform h5 into pth.
+//   for efficientnet_v2
+     https://pan.baidu.com/s/1uZX36rvrfEss-JGj4yfzbQ  with pw: 5gu1  or 
+     
+'''
+## weights
+The weights of our model are available [in GoogleDrive](https://drive.google.com/drive/folders/165t_Z9ust6osKUIejUsHFTvF0QIZjYg8?usp=drive_link), moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
+
+## training
+```bash train-x.sh``` from your terminal
+or 
+```
+    python main.py
+     --useGPU 0  \
+     --dataset EDDFS_dr  \
+     --preprocess 7  \
+     --imagesize 448  \
+     --net coattnet_v2_withWeighted_tiny  \
+     --epochs 51  \
+     --batchsize 32  \
+     --lr 0.00009  \
+     --numworkers 4  \
+     --pretrained False  \
+     --lossfun focalloss
+```
+
+## a test example
+```
+    python test.py
+     --useGPU 0  \
+     --dataset EDDFS_dr  \
+     --preprocess 7  \
+     --imagesize 448  \
+     --net coattnet_v2_withWeighted_tiny  \
+     --numworkers 4  \
+     --weight your_model_file  \
+```
