@@ -1,4 +1,5 @@
 # EDDFS_dataset
+# we are testing the code ---- we will try to upload the code this week, 2024.06.03
 ## a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
 ### EDDFS contains 28877 color fundus images for deep learning-based diagnosis. Except for 15000 healthy samples, the dataset consists of 8 eye disorders including diabetic retinopathy, agerelated macular degeneration, glaucoma, pathological myopia, hypertension, retinal vein occlusion, LASIK spot and others. 
 
@@ -31,7 +32,7 @@ Please also notice that:
 ========================== journal: spic ================================
 
 The updated network is published online with the trained model available on mega drive : [multi-label_multi-disease](https://mega.nz/folder/R8UWFALB#qWSSJB6ToQOT6XLEWOohLA), [single-label_multi-disease](https://mega.nz/folder/ZwlhjTCb#j2tIDQuAUMMhGawjTwiAZw) and [single-label_single-disease](https://mega.nz/folder/Aw1ikRIY#pjZ_znNf70IHfk3Tveb-bQ).
-The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (parallelnet_v2).
+The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (xxxx_parallelnet_v2_xxxx.pth).
 
 ```
 @article{XIA2024117151,
@@ -53,8 +54,8 @@ author = {Xue Xia and Ying Li and Guobei Xiao and Kun Zhan and Jinhua Yan and Ch
 # Running the CoAtt Net
 ## Before running
 Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
-You can download pretrained weights into ImageNet '''./pre-trained/ImageNet/''' from (resnet18)[https://download.pytorch.org/models/resnet18-5c106cde.pth], (densenet)[https://download.pytorch.org/models/densenet121-a639ec97.pth], 
-(efficientnet)[run pre-trained/a_tools/trans_weights_to_pytorch.py to transform h5 into pth] or (efficientnet_v2)[to be uploaded].
+You can download pretrained weights into ImageNet '''./pre-trained/ImageNet/''' from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), 
+[efficientnet](run pre-trained/a_tools/trans_weights_to_pytorch.py to transform h5 into pth) or [efficientnet_v2](to be uploaded).
 
 ## Weights
 The weights of our model are available [in GoogleDrive](https://drive.google.com/drive/folders/165t_Z9ust6osKUIejUsHFTvF0QIZjYg8?usp=drive_link), moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
