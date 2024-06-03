@@ -53,22 +53,13 @@ author = {Xue Xia and Ying Li and Guobei Xiao and Kun Zhan and Jinhua Yan and Ch
 # Running the CoAtt Net
 ## Before running
 Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
-You can download pretrained weights and put them into ImageNet ./pre-trained/ImageNet/
-'''
-// for resnet:
-     https://download.pytorch.org/models/resnet18-5c106cde.pth
-// for densenet
-     https://download.pytorch.org/models/densenet121-a639ec97.pth
-// for efficientnet
-     run pre-trained/a_tools/trans_weights_to_pytorch.py to transform h5 into pth.
-//   for efficientnet_v2
-     https://pan.baidu.com/s/1uZX36rvrfEss-JGj4yfzbQ  with pw: 5gu1  or 
-     
-'''
-## weights
+You can download pretrained weights into ImageNet '''./pre-trained/ImageNet/''' from (resnet18)[https://download.pytorch.org/models/resnet18-5c106cde.pth], (densenet)[https://download.pytorch.org/models/densenet121-a639ec97.pth], 
+(efficientnet)[run pre-trained/a_tools/trans_weights_to_pytorch.py to transform h5 into pth] or (efficientnet_v2)[to be uploaded].
+
+## Weights
 The weights of our model are available [in GoogleDrive](https://drive.google.com/drive/folders/165t_Z9ust6osKUIejUsHFTvF0QIZjYg8?usp=drive_link), moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
 
-## training
+## Training
 ```bash train-x.sh``` from your terminal
 or 
 ```
@@ -86,7 +77,7 @@ or
      --lossfun focalloss
 ```
 
-## a test example
+## A test example
 ```
     python test.py
      --useGPU 0  \
