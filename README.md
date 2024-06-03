@@ -54,10 +54,23 @@ author = {Xue Xia and Ying Li and Guobei Xiao and Kun Zhan and Jinhua Yan and Ch
 # Running the CoAtt Net
 ## Before running
 Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
-You can download pretrained weights into ImageNet ```./pre-trained/ImageNet/``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), or [efficientnet_v2](to be uploaded).
+You can download the weights pretrained on ImageNet into ```./pre-trained/put your weights here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link).
 
-## Weights
-The weights of our model are available [in GoogleDrive](https://drive.google.com/drive/folders/165t_Z9ust6osKUIejUsHFTvF0QIZjYg8?usp=drive_link), moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
+## Final Weights
+The well-trained weights of our model are available at:
+|  task   | weights  | 
+|  :----  | :----  |
+| multi-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1uJNRitNcCGGnvWzVi-JipT4AdQKI15yO?usp=drive_link), [Mega](https://mega.nz/folder/R0kGVKqJ#Ni-vTsfCBq5UVowOsAS_xg) |
+| single-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1OiDxCeLFzxemy0YiTNpM8JG26sX_sajU?usp=drive_link), [Mega](https://mega.nz/folder/Igcz1BwY#DHMoZiVPyMvCsaf30BQvTw) |
+| DR grading  | [GoogleDrive](https://drive.google.com/drive/folders/1zBND3aKJmJ1qagkZkufGeJOnljnP7nTH?usp=drive_link), [Mega](https://mega.nz/folder/gk1yFYBL#IbzsbWKs4sFCfjvDCveFrw) |
+| AMD grading  | [GoogleDrive](https://drive.google.com/drive/folders/1kkEmUSCRdxKNVr6cZHd5tdzY5wk6o9KT?usp=drive_link), [Mega](https://mega.nz/folder/BgNnXaIK#TWhoxQ5MqSxQaUDOchpJkA) |
+| Laser  | [GoogleDrive](https://drive.google.com/drive/folders/1KodzUj_EWwpp4KvgFfaBnSJkPyFCARWA?usp=drive_link), [Mega](https://mega.nz/folder/M1VinLSa#ubKOtW3OgOYXw6r4R3h6yg)  |
+| RVO  | [GoogleDrive](https://drive.google.com/drive/folders/15k58E2ZLWb3QHQKceej7BWXfXzZ25fod?usp=drive_link), [Mega](https://mega.nz/folder/89sjmRiQ#_3dXCtRoGRU-hML5tplPVQ) |
+| Hypertension Retinopathy | [GoogleDrive](), [Mega]() |
+| Pathological Myopia | [GoogleDrive](https://drive.google.com/drive/folders/1c2sFRYa4c11pbKmWF4Zja119ZgzZDdt9?usp=drive_link), [Mega](https://mega.nz/folder/4p1ijTxR#uRV9Pa98OqacDIchk05omg) |
+| --  | [GoogleDrive](), [Mega]() |
+
+[in GoogleDrive](https://drive.google.com/drive/folders/165t_Z9ust6osKUIejUsHFTvF0QIZjYg8?usp=drive_link), moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
 
 ## Training
 ```bash train-x.sh``` from your terminal
