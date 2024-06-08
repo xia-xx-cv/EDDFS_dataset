@@ -1,5 +1,4 @@
 # EDDFS_dataset
-# we are testing the code ---- we will try to upload the code this week, 2024.06.03
 ## a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
 ### EDDFS contains 28877 color fundus images for deep learning-based diagnosis. Except for 15000 healthy samples, the dataset consists of 8 eye disorders including diabetic retinopathy, agerelated macular degeneration, glaucoma, pathological myopia, hypertension, retinal vein occlusion, LASIK spot and others. 
 
@@ -66,7 +65,7 @@ opencv-python==4.8.1.78
 matplotlib==3.8.2
 pands==2.1.4
 tqdm
-# We also tested the environment on an MPS MacOS with Python3.9
+# The code can also be run on an MPS MacOS with Python3.9.
 ```
 
 ## Pretrained Weights
