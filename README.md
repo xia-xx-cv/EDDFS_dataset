@@ -74,7 +74,7 @@ Prepare your dataset and record the the dataset path into "image_root" and "labe
 You can download the weights pretrained on ImageNet into ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link).
 
 ## About the Image Pre-Processing
-The dataloaders of different datasets or tasks locate at ```datasets/All_Datasets.py```, where detail paths locates. While basic paths can be modified at ```config/_data/datasetConf.py```.
+The dataloaders of different datasets or tasks locate at ```datasets/All_Datasets.py```, where annotation file reading codes locate. While basic paths can be modified at ```config/_data/datasetConf.py```.
 
 ## Final Weights
 The well-trained weights of our model are available at:
