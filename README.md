@@ -70,7 +70,7 @@ tqdm
 
 ## Pretrained Weights
 Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
-You can download the weights pretrained on ImageNet into ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link).
+You can download the weights of baselines pretrained on ImageNet into ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link).
 
 ## About the Image Pre-Processing
 The dataloaders of different datasets or tasks locate at ```datasets/All_Datasets.py```, where annotation file reading codes locate. While basic paths can be modified at ```config/_data/datasetConf.py```.
@@ -88,7 +88,7 @@ The well-trained weights of our model are available at:
 | Pathological Myopia | [GoogleDrive](https://drive.google.com/drive/folders/1GSwGm0o8GC-SvYcSscVGEE-JcxQbX3fp?usp=drive_link), [Mega](https://mega.nz/folder/4p1ijTxR#uRV9Pa98OqacDIchk05omg) |
 | Hypertension Retinopathy | [GoogleDrive](), [Mega]() |
 
-moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)
+<!--moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)-->
 
 ## Training
 ```bash train-x.sh``` from your terminal
