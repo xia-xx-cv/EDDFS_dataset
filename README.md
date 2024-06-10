@@ -30,8 +30,8 @@ Please also notice that:
 ```
 ========================== journal: spic ================================
 
-The updated network is published online with the trained model available on mega drive : [multi-label_multi-disease](https://mega.nz/folder/R8UWFALB#qWSSJB6ToQOT6XLEWOohLA), [single-label_multi-disease](https://mega.nz/folder/ZwlhjTCb#j2tIDQuAUMMhGawjTwiAZw) and [single-label_single-disease](https://mega.nz/folder/Aw1ikRIY#pjZ_znNf70IHfk3Tveb-bQ).
-The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (xxxx_parallelnet_v2_xxxx.pth).
+<!--The updated network is published online with the trained model available on mega drive : [multi-label_multi-disease](https://mega.nz/folder/R8UWFALB#qWSSJB6ToQOT6XLEWOohLA), [single-label_multi-disease](https://mega.nz/folder/ZwlhjTCb#j2tIDQuAUMMhGawjTwiAZw) and [single-label_single-disease](https://mega.nz/folder/Aw1ikRIY#pjZ_znNf70IHfk3Tveb-bQ).
+The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (xxxx_parallelnet_v2_xxxx.pth).-->
 
 ```
 @article{XIA2024117151,
@@ -79,14 +79,14 @@ The dataloaders of different datasets or tasks locate at ```datasets/All_Dataset
 The well-trained weights of our model are available at:
 |  task   | weights  | 
 |  :----  | :----  |
-| multi-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1gMn3XW4r41KHvXWjUdluL8_S2yVJrcSP?usp=drive_link), [Mega](https://mega.nz/folder/R0kGVKqJ#Ni-vTsfCBq5UVowOsAS_xg) |
-| single-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1Yqf9NYFlzh34bsGHJbL9loVkqFfLhOd2?usp=drive_link), [Mega](https://mega.nz/folder/Igcz1BwY#DHMoZiVPyMvCsaf30BQvTw) |
-| DR grading  | [GoogleDrive](https://drive.google.com/drive/folders/1zBND3aKJmJ1qagkZkufGeJOnljnP7nTH?usp=drive_link), [Mega](https://mega.nz/folder/gk1yFYBL#IbzsbWKs4sFCfjvDCveFrw) |
-| AMD grading  | [GoogleDrive](https://drive.google.com/drive/folders/1MP6rVbfoJVNywtJ9L4rNBg_ZsgX6S4pW?usp=drive_link), [Mega](https://mega.nz/folder/BgNnXaIK#TWhoxQ5MqSxQaUDOchpJkA) |
-| Laser  | [GoogleDrive](https://drive.google.com/drive/folders/1f0StXgZaXBRS1HyZ89walFtMcHu6cP09?usp=drive_link), [Mega](https://mega.nz/folder/M1VinLSa#ubKOtW3OgOYXw6r4R3h6yg)  |
-| RVO  | [GoogleDrive](https://drive.google.com/drive/folders/15k58E2ZLWb3QHQKceej7BWXfXzZ25fod?usp=drive_link), [Mega](https://mega.nz/folder/89sjmRiQ#_3dXCtRoGRU-hML5tplPVQ) |
-| Pathological Myopia | [GoogleDrive](https://drive.google.com/drive/folders/1GSwGm0o8GC-SvYcSscVGEE-JcxQbX3fp?usp=drive_link), [Mega](https://mega.nz/folder/4p1ijTxR#uRV9Pa98OqacDIchk05omg) |
-| Hypertension Retinopathy | [GoogleDrive](), [Mega]() |
+| multi-label multi-disease  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1gMn3XW4r41KHvXWjUdluL8_S2yVJrcSP?usp=drive_link),--> [Mega](https://mega.nz/folder/R0kGVKqJ#Ni-vTsfCBq5UVowOsAS_xg) |
+| single-label multi-disease  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1Yqf9NYFlzh34bsGHJbL9loVkqFfLhOd2?usp=drive_link),--> [Mega](https://mega.nz/folder/Igcz1BwY#DHMoZiVPyMvCsaf30BQvTw) |
+| DR grading  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1zBND3aKJmJ1qagkZkufGeJOnljnP7nTH?usp=drive_link),--> [Mega](https://mega.nz/folder/gk1yFYBL#IbzsbWKs4sFCfjvDCveFrw) |
+| AMD grading  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1MP6rVbfoJVNywtJ9L4rNBg_ZsgX6S4pW?usp=drive_link),--> [Mega](https://mega.nz/folder/BgNnXaIK#TWhoxQ5MqSxQaUDOchpJkA) |
+| Laser  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1f0StXgZaXBRS1HyZ89walFtMcHu6cP09?usp=drive_link),--> [Mega](https://mega.nz/folder/M1VinLSa#ubKOtW3OgOYXw6r4R3h6yg)  |
+| RVO  | <!--[GoogleDrive](https://drive.google.com/drive/folders/15k58E2ZLWb3QHQKceej7BWXfXzZ25fod?usp=drive_link),--> [Mega](https://mega.nz/folder/89sjmRiQ#_3dXCtRoGRU-hML5tplPVQ) |
+| Pathological Myopia | <!--[GoogleDrive](https://drive.google.com/drive/folders/1GSwGm0o8GC-SvYcSscVGEE-JcxQbX3fp?usp=drive_link),--> [Mega](https://mega.nz/folder/4p1ijTxR#uRV9Pa98OqacDIchk05omg) |
+| Hypertension Retinopathy | <!--[GoogleDrive](),--> [Mega]() |
 
 <!--moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)-->
 
