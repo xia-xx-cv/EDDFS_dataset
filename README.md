@@ -146,8 +146,9 @@ project-root/
 │   └── ...
 ├── pre-trained/
 ├── results/
-│   └── ...
+│   └── evaluation_during_training.csv
 ├── runs/
+│   └── training_tensorboard_summary.local
 ├── tools/
 ├── weights/
 │   └── well-trained.pth/
