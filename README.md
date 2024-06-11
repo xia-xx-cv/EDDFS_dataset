@@ -1,5 +1,5 @@
-# EDDFS_dataset (in update ......)
-## a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
+## EDDFS_dataset (in update ......)
+### a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
 ### EDDFS contains 28877 color fundus images for deep learning-based diagnosis. Except for 15000 healthy samples, the dataset consists of 8 eye disorders including diabetic retinopathy, agerelated macular degeneration, glaucoma, pathological myopia, hypertension, retinal vein occlusion, LASIK spot and others. 
 
 Once you decide to involve this dataset, you must agree to this Data Download Consent. By doing so, you accept all the risks of getting your full dataset.  
@@ -48,9 +48,12 @@ author = {Xue Xia and Ying Li and Guobei Xiao and Kun Zhan and Jinhua Yan and Ch
 ```
 
 
-5. The dataset can be downloaded through [GoogleDrive_Link](https://drive.google.com/drive/folders/1zsRnZm_PE0uvNex7NMQgT_8acOIuCZXx?usp=drive_link), [Mega_Link](https://mega.nz/folder/Ep9GhY4B#WyqV8WBOxNRMORpza6Cigw) or [Baiduyun_Link](https://pan.baidu.com/s/1XOQAg4-Xlf41VanYOtKYpQ?pwd=qkds) with pw: qkds.
+5. The dataset can be downloaded through [GoogleDrive_Link](https://drive.google.com/file/d/14haq2HifMv8rguGr8zUq8hM0TOblMzow/view?usp=drive_link), [Mega_Link](https://mega.nz/file/gkc0wYoC#6Cl-Pmx6y_jsT0wO-bDvOtcjMnmHzAryBuNXyQunGSY) or [Baiduyun_Link]() with pw: .
 
-# Running the CoAtt Net
+========================== Codes ================================
+Due to the extensive range of experiments conducted with various configurations across different devices and students, the provided code and weights on GitHub do not exactly replicate the experiments described in our paper. However, our model consistently maintains its top ranking in comparative evaluations. Moerver, the training log files are also provided along with the ```.pth``` files on Mega Drive to confirm their integrity.
+
+# Running the CoAtt Net code
 ## Requirements
 ```
 einops==0.7.0
@@ -69,18 +72,17 @@ tqdm
 ```
 
 ## Pretrained Weights
-Prepare your dataset and record the the dataset path into "image_root" and "label_dir" in '''/config/_data/datasetConf.py'''.
-You can download the weights of baselines pretrained on ImageNet into ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link).
+Pretrained weights for the comparison baselines can be downloaded from the links:  ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link). Place the downloaded weights in the ```./pre-trained/put_your_weights_here``` direc.tory
 
 ## About the Image Pre-Processing
-The dataloaders of different datasets or tasks locate at ```datasets/All_Datasets.py```, where annotation file reading codes locate. While basic paths can be modified at ```config/_data/datasetConf.py```.
+The data loaders for different datasets or tasks are located in ```datasets/All_Datasets.py```, which includes annotation loading code. You can modify basic paths in ```config/_data/datasetConf.py```.
 
 ## Final Weights
-The well-trained weights of our model are available at:
+The well-trained weights of our model are available for various tasks:
 |  task   | weights  | 
 |  :----  | :----  |
-| multi-label multi-disease  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1gMn3XW4r41KHvXWjUdluL8_S2yVJrcSP?usp=drive_link),--> [Mega](https://mega.nz/folder/R0kGVKqJ#Ni-vTsfCBq5UVowOsAS_xg) |
-| single-label multi-disease  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1Yqf9NYFlzh34bsGHJbL9loVkqFfLhOd2?usp=drive_link),--> [Mega](https://mega.nz/folder/Igcz1BwY#DHMoZiVPyMvCsaf30BQvTw) |
+| multi-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1gMn3XW4r41KHvXWjUdluL8_S2yVJrcSP?usp=drive_link), <!--[Mega](https://mega.nz/folder/R0kGVKqJ#Ni-vTsfCBq5UVowOsAS_xg)--> |
+| single-label multi-disease  | [GoogleDrive](https://drive.google.com/drive/folders/1Yqf9NYFlzh34bsGHJbL9loVkqFfLhOd2?usp=drive_link), <!--[Mega](https://mega.nz/folder/Igcz1BwY#DHMoZiVPyMvCsaf30BQvTw)--> |
 | DR grading  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1zBND3aKJmJ1qagkZkufGeJOnljnP7nTH?usp=drive_link),--> [Mega](https://mega.nz/folder/gk1yFYBL#IbzsbWKs4sFCfjvDCveFrw) |
 | AMD grading  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1MP6rVbfoJVNywtJ9L4rNBg_ZsgX6S4pW?usp=drive_link),--> [Mega](https://mega.nz/folder/BgNnXaIK#TWhoxQ5MqSxQaUDOchpJkA) |
 | Laser  | <!--[GoogleDrive](https://drive.google.com/drive/folders/1f0StXgZaXBRS1HyZ89walFtMcHu6cP09?usp=drive_link),--> [Mega](https://mega.nz/folder/M1VinLSa#ubKOtW3OgOYXw6r4R3h6yg)  |
@@ -91,8 +93,9 @@ The well-trained weights of our model are available at:
 <!--moreover, all comparison weights including ours are available [in Mega](https://mega.nz/folder/Jk1gRThZ#wxFjbVdZOql99UZWvZ2lcA)-->
 
 ## Training
-```bash train-x.sh``` from your terminal
-or 
+To train the model, run the following command from your terminal
+```bash train-x.sh```
+or use the Python script
 ```
     python main.py
      --useGPU 0  \
