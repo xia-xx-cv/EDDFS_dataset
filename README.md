@@ -1,4 +1,4 @@
-## EDDFS_dataset (in update ......)
+## EDDFS_dataset (in update ......val.csv missing)
 ### a retinal fundus dataset for eye disease diagnosis and fundus synthesis  
 ### EDDFS contains 28877 color fundus images for deep learning-based diagnosis. Except for 15000 healthy samples, the dataset consists of 8 eye disorders including diabetic retinopathy, agerelated macular degeneration, glaucoma, pathological myopia, hypertension, retinal vein occlusion, LASIK spot and others. 
 
@@ -124,3 +124,30 @@ or use the Python script
      --numworkers 4  \
      --weight your_model_file  \
 ```
+========================== Directory Structure ================================
+
+project-root/
+├── README.md
+├── train-x.sh
+├── test.py
+├── main.py
+├── mask.png
+├── config/
+│   ├── _data/
+│   │   └── datasetConf.py
+├── datas/
+│   ├── EDDFS/
+│   │   └── Annotation/
+│   │       └── .csv
+│   ├── other_datasets/
+├── datasets/
+│   └── All_Datasets.py
+├── models/
+│   └── ...
+├── pre-trained/
+├── results/
+│   └── ...
+├── runs/
+├── tools/
+├── weights/
+│   └── well-trained.pth/
