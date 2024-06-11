@@ -74,7 +74,7 @@ tqdm
 ```
 
 ## Pretrained Weights
-Pretrained weights for the comparison baselines can be downloaded from the links:  ```./pre-trained/put_your_weights_here``` from [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link). Place the downloaded weights in the ```./pre-trained/put_your_weights_here``` direc.tory
+Pretrained weights for the comparison baselines can be downloaded from the links: [resnet18](https://download.pytorch.org/models/resnet18-5c106cde.pth), [densenet](https://download.pytorch.org/models/densenet121-a639ec97.pth), [efficientnet_v2_Mega](https://mega.nz/folder/w10SQJoL#07gP-1FxQXEMRuZDS_4dLQ) or [efficientnet_v2_Google](https://drive.google.com/drive/folders/1FAKKjmmFV6kmgn5gl6PH8MMDd-kykcY5?usp=drive_link). Place the downloaded weights in the ```./pre-trained/put_your_weights_here``` directory.
 
 ## About the Image Pre-Processing
 The data loaders for different datasets or tasks are located in ```datasets/All_Datasets.py```, which includes annotation loading code. You can modify basic paths in ```config/_data/datasetConf.py```.
