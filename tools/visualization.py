@@ -11,7 +11,7 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 from models import resnet18, densenet121, efficientnet_b2, efficientnetv2_s, dnn_18, parallelnet_v2_withWeighted_tiny
 from models import parallelnet_v2_withWeighted_noCross_tiny
 
-# 代码1中的函数
+
 def myimshows(imgs, titles=False, fname="test.jpg", size=6):
     lens = len(imgs)
     fig = plt.figure(figsize=(size * lens,size))
@@ -34,18 +34,16 @@ def myimshows(imgs, titles=False, fname="test.jpg", size=6):
     
 def tensor2img(tensor,heatmap=False,shape=(256,256)):
     np_arr=tensor.detach().numpy()#[0]
-    #对数据进行归一化
     if np_arr.max()>1 or np_arr.min()<0:
         np_arr=np_arr-np_arr.min()
         np_arr=np_arr/np_arr.max()
     #np_arr=(np_arr*255).astype(np.uint8)
     if np_arr.shape[0]==1:
-        # 如果是灰度图像，复制三个通道以创建一个RGB图像
         np_arr=np.concatenate([np_arr,np_arr,np_arr],axis=0)
     np_arr=np_arr.transpose((1,2,0))
     return np_arr
 
-# 数据预处理
+# preprocessing
 data_transforms = {
     'train': transforms.Compose([
         transforms.RandomResizedCrop((448, 448), scale=(0.05, 1.0)),
@@ -59,8 +57,6 @@ data_transforms = {
     ]),
 }
 
-# 加载模型
-# 加载model
 model = parallelnet_v2_withWeighted_tiny(num_classes=5, pretrained=False)
 load_from_root = r'F:\LY\Results\NC_dr'
 
@@ -74,36 +70,31 @@ load_from_path = {
     'noCross': r'NC_dr_7_448-parallelnet_v2_withWeighted_noCross_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossfocalloss.pth.tar'
 }
 
-# 更改全连接层以匹配你的类别数
+
 # num_ftrs = model.head.fc.in_features
-# model.head.fc = nn.Linear(num_ftrs, 5)  # 假设你的类别数为5
+# model.head.fc = nn.Linear(num_ftrs, 5)  # class_num=5
 
 checkpoint = torch.load(os.path.join(load_from_root, load_from_path['Ours']), map_location='cuda:0')
 model.load_state_dict(checkpoint['state_dict'])
 
 device = torch.device("cuda:0")
-# 模型转移到相应设备
 model = model.to(device)
 print("layer2: \n", model.layer2[0].w1, '(w1 conv), \n', model.layer2[0].w2, '(w2 transformer)')
 print("layer3: \n", model.layer3[0].w1, '(w1 conv), \n', model.layer3[0].w2, '(w2 transformer)')
 print("layer4: \n", model.layer4[0].w1, '(w1 conv), \n', model.layer4[0].w2, '(w2 transformer)')
 
-# 你的图像路径
-# image_path = r'C:\Users\LY\Desktop\转期刊response\visualization\dr.JPG'
-#
-# # 加载图像
-# image = Image.open(image_path).convert("RGB")
 
-# # 使用代码1中定义的图像转换
+# image_path = r'C:\Users\LY\Desktop\转期刊response\visualization\dr.JPG'
+# image = Image.open(image_path).convert("RGB")
 # input_image = data_transforms['val'](image).unsqueeze(0).to(device)
 
-# # 使用GradCAM
+# # ---GradCAM---
 # target_layer = model.layer2
 # with GradCAM(model=model, target_layers=[target_layer], use_cuda=torch.cuda.is_available()) as cam:
 #     target = [ClassifierOutputTarget(1)]  # 修改为你的目标类别
 #     grayscale_cam = cam(input_tensor=input_image, targets=target)
 #
-#     #将热力图结果与原图进行融合
+#     # ori + heapmap
 #     rgb_img=tensor2img(input_image.cpu().squeeze())
 #     visualization = show_cam_on_image(rgb_img, grayscale_cam[0], use_rgb=True)
 #     myimshows([rgb_img, grayscale_cam[0], visualization], ["image", "cam", "image + cam"], fname='Ours.jpg')
