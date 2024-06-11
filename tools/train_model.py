@@ -62,26 +62,11 @@ def train_model(model, train_loader, eval_loader,
                 loss.backward()
                 return loss
             loss = optimizer.step(closure)
-            # optimizer.zero_grad()
-            # inputs, label = train_item
-            # inputs = inputs.to(device=device, dtype=torch.float)
-            # # label = torch.tensor(np.array(label, dtype=float)).to(device=device)
-            # label = label.to(device=device)
-            # outputs = model(inputs)
-            # # 2 outputs if distillation token is adopted
-            # if isinstance(outputs, tuple):
-            #     loss = criterion(outputs[0], label)
-            # else:
-            #     loss = criterion(outputs, label)
-            # loss.backward()
-            # optimizer.step()
 
-            # tensorboard loss
             writer.add_scalar('loss', loss.item(), global_step=tot_step_count)
             # tensorboard lr
             writer.add_scalar('lr', optimizer.param_groups[0]['lr'], global_step=tot_step_count)
             tot_step_count += 1
-        # updating lr
         scheduler.step()
 
         if (epoch) % eval_interval == 0:
