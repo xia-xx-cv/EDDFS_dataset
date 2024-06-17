@@ -47,11 +47,7 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-
-classes = ['health', 'AMD1', 'AMD2', 'AMD3']
-
-
-def plot_confusion_matrix(cm, savename, title='Confusion Matrix'):
+def plot_confusion_matrix(cm, classes, savename, title='Confusion Matrix'):
     plt.figure(figsize=(12, 8), dpi=100)
     np.set_printoptions(precision=2)
 
@@ -256,7 +252,7 @@ if __name__ == "__main__":
 
     # computing confusion matrix
     # cm = confusion_matrix(labels_cls_list, pred_cls_list)
-    # plot_confusion_matrix(cm, 'confusion_matrix.png', title='confusion matrix')
+    # plot_confusion_matrix(cm, classes_names, 'confusion_matrix.png', title='confusion matrix')
 
     print("============ finished test==============")
     print()
