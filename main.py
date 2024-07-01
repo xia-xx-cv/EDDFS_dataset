@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--pretrained', type=str2bool, default=True,
                         help='load pretrained model?')
-    parser.add_argument('--lossfun', type=str, default='focalloss',
+    parser.add_argument('--lossfun', type=str, default=None,
                         help='loss function? if None, then default bce for multi_labels, '
                              'or default ce for multi_classes.'
                              ' choose from: bce, ce, mse, focalloss')
