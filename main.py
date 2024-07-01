@@ -126,34 +126,34 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    if args.dataset == "EDDFS_delN_ml":  # multi-label multi-disease cls without normal samples
-        opt_dataset = EDDFS_delN_ml_conf()
-    elif args.dataset == "EDDFS_delMandN_mc":  # single-label multi-disease cls without normal samples
-        opt_dataset = EDDFS_delMandN_mc_conf()
-    elif args.dataset == "EDDFS_amd":  # AMD grading
-        opt_dataset = EDDFS_amd_conf()
-    elif args.dataset == "EDDFS_dr":  # DR grading
-        opt_dataset = EDDFS_dr_conf()
-    elif args.dataset == "EDDFS_glaucoma":  # glaucoma identification
-        opt_dataset = EDDFS_glaucoma_conf()
-    elif args.dataset == "EDDFS_myopia":  # pathological myopia identification
-        opt_dataset = EDDFS_myopia_conf()
-    elif args.dataset == "EDDFS_rvo":  # RVO identification
-        opt_dataset = EDDFS_rvo_conf()
-    elif args.dataset == "EDDFS_ls":  # Laser photocoagulation identification
-        opt_dataset = EDDFS_ls_conf()
-    elif args.dataset == "EDDFS_hyper":  # hypertension retinopathy identification
-        opt_dataset = EDDFS_hyper_conf()
-    elif args.dataset == "EDDFS_other":  # others or not identification
-        opt_dataset = EDDFS_other_conf()
-    elif args.dataset == "ODIR_delMandN_mc":  # single-label multi-disease cls without normal samples
-        opt_dataset = ODIR_delMandN_mc_conf  # on OIA-ODIR dataset
-    elif args.dataset == "APTOS2019":
-        opt_dataset = APTOS2019_conf
-    else:
-        raise ValueError("args.dataset is not supported!!!")
+    exec('opt_dataset = {}_conf()'.format(args.dataset))  # updated on 20240701 for simplicity
+    # if args.dataset == "EDDFS_delN_ml":  # multi-label multi-disease cls without normal samples
+    #     opt_dataset = EDDFS_delN_ml_conf()
+    # elif args.dataset == "EDDFS_delMandN_mc":  # single-label multi-disease cls without normal samples
+    #     opt_dataset = EDDFS_delMandN_mc_conf()
+    # elif args.dataset == "EDDFS_amd":  # AMD grading
+    #     opt_dataset = EDDFS_amd_conf()
+    # elif args.dataset == "EDDFS_dr":  # DR grading
+    #     opt_dataset = EDDFS_dr_conf()
+    # elif args.dataset == "EDDFS_glaucoma":  # glaucoma identification
+    #     opt_dataset = EDDFS_glaucoma_conf()
+    # elif args.dataset == "EDDFS_myopia":  # pathological myopia identification
+    #     opt_dataset = EDDFS_myopia_conf()
+    # elif args.dataset == "EDDFS_rvo":  # RVO identification
+    #     opt_dataset = EDDFS_rvo_conf()
+    # elif args.dataset == "EDDFS_ls":  # Laser photocoagulation identification
+    #     opt_dataset = EDDFS_ls_conf()
+    # elif args.dataset == "EDDFS_hyper":  # hypertension retinopathy identification
+    #     opt_dataset = EDDFS_hyper_conf()
+    # elif args.dataset == "EDDFS_other":  # others or not identification
+    #     opt_dataset = EDDFS_other_conf()
+    # elif args.dataset == "ODIR_delMandN_mc":  # single-label multi-disease cls without normal samples
+    #     opt_dataset = ODIR_delMandN_mc_conf  # on OIA-ODIR dataset
+    # elif args.dataset == "APTOS2019":
+    #     opt_dataset = APTOS2019_conf
+    # else:
+    #     raise ValueError("args.dataset is not supported!!!")
 
-    # loc = {"dataset": EDDFS_delN_ml_Dataset}  # as a marker
     loc = {"create_model": convnext_tiny()}  # as a marker
     glb = {}
 
