@@ -28,7 +28,7 @@ Please also notice that:
   doi          = {10.1109/MMSP55362.2022.9949547},  
 }  
 ```
-========================== journal: spic [open_access]([)](https://www.sciencedirect.com/science/article/pii/S0923596524000523) ================================
+========================== journal: spic [open_access](https://www.sciencedirect.com/science/article/pii/S0923596524000523) ================================
 
 <!--The updated network is published online with the trained model available on mega drive : [multi-label_multi-disease](https://mega.nz/folder/R8UWFALB#qWSSJB6ToQOT6XLEWOohLA), [single-label_multi-disease](https://mega.nz/folder/ZwlhjTCb#j2tIDQuAUMMhGawjTwiAZw) and [single-label_single-disease](https://mega.nz/folder/Aw1ikRIY#pjZ_znNf70IHfk3Tveb-bQ).
 The above link contains ```.pth``` files trained on ResNet, ResNeXT, EfficientNet, DenseNet, Inception, DNN and ours (xxxx_parallelnet_v2_xxxx.pth).-->
