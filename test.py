@@ -183,12 +183,12 @@ if __name__ == "__main__":
                         help=all_data_infor)
     parser.add_argument('--weight', type=str,
                         # or youcan concat the weight path string with dataset name in main() func
-                        default="EDDFS_dr_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossfocalloss.pth.tar",
+                        default="weights/EDDFS_dr_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossfocalloss.pth.tar",
                         help='load trained model?')
     parser.add_argument('--useGPU', type=int, default=0,
                         help='-1: "cpu"; 0, 1, ...: "cuda:x";')
     parser.add_argument('--seed', type=int, default=2022)
-    parser.add_argument('--preprocess', type=str, default='6',
+    parser.add_argument('--preprocess', type=str, default='7',
                         help='preprocessing type')
     parser.add_argument('--imagesize', type=int, default=448,
                         help='image size')
