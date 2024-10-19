@@ -5,6 +5,7 @@ import numpy as np
 np.set_printoptions(linewidth=100)
 import random
 import torch
+import pandas as pd
 # import torch.backends.cudnn as cudnn
 import torch.nn as nn
 from torchvision import datasets, models, transforms
@@ -16,11 +17,7 @@ from sklearn.metrics import confusion_matrix, classification_report, multilabel_
 # from sklearn.metrics import f1_score
 # from sklearn.metrics import average_precision_score
 # from sklearn.metrics import roc_auc_score, cohen_kappa_score
-
 warnings.filterwarnings('ignore')
-
-from config._data.datasetConf import EDDFS_delMandN_mc_conf, EDDFS_amd_conf, \
-    EDDFS_dr_conf
 from config._data.datasetConf import *
 from models import resnet18
 from tools.eval_model import eval_model
@@ -106,6 +103,7 @@ def main(args):
     create_model = getattr(module, args.net)
     model = create_model(num_classes=classes_num, pretrained=True)
 
+    # args.weight = "weights/" + args.dataset + args.weight
     if os.path.isfile(args.weight):
         print("=> resume is True. ====\n====loading checkpoint '{}'".format(args.weight))
         checkpoint = torch.load(args.weight, map_location=device)  # or torch.load(resume)
@@ -126,7 +124,6 @@ def main(args):
     # concat_data = ConcatDataset([train_dataset, eval_dataset])
     # concat_loader = DataLoader(concat_data, args.batchsize, shuffle=False, num_workers=args.numworkers)
     # ===================
-
     if args.lossfun is None:
         if opt_dataset.task == "multi_labels":
             criterion = nn.BCEWithLogitsLoss()
@@ -154,8 +151,7 @@ def main(args):
                    task=opt_dataset.task,
                    test=True,
                    average_type="weighted")
-    # save labels_cls_list, out_sm_cls_list
-    import pandas as pd
+
     # saving results into csv
     df = pd.DataFrame(labels_cls_list.numpy())
     df.to_csv(args.weight[:-8] + "-test-labels_cls_list.csv")
@@ -175,20 +171,23 @@ def main(args):
 
 if __name__ == "__main__":
     all_data_infor = ('EDDFS_delN_ml,'  # multi-label(ml) multi-disease without normal(delN)
-                      'EDDFS_delMandN_mc,'  # single-label multi-disease(mc) without normal(delMandN, 
+                      'EDDFS_delMandN_mc,'  # single-label multi-disease(mc) without normal(delMandN,
                                             # deleted multi-label and normal samples)
                       'EDDFS_dr, EDDFS_amd,'  # DR and AMD grading
-                      'EDDFS_glaucoma, EDDFS_myopia, EDDFS_rvo,' # binary classification, 
+                      'EDDFS_glaucoma, EDDFS_myopia, EDDFS_rvo,' # binary classification,
                       'EDDFS_ls, EDDFS_hyper, EDDFS_other,'  # but we marked them as multi_classes for simplicity
                       'ODIR_delMandN_mc, APTOS2019')  # a multi-disease dataset ODIR, and a DR dataset APTOS
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', type=str, default="EDDFS_dr",
+                        help=all_data_infor)
+    parser.add_argument('--weight', type=str,
+                        # or youcan concat the weight path string with dataset name in main() func
+                        default="EDDFS_dr_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossfocalloss.pth.tar",
+                        help='load trained model?')
     parser.add_argument('--useGPU', type=int, default=0,
                         help='-1: "cpu"; 0, 1, ...: "cuda:x";')
     parser.add_argument('--seed', type=int, default=2022)
-
-    parser.add_argument('--dataset', type=str, default="EDDFS_delMandN_mc",
-                        help=all_data_infor)
     parser.add_argument('--preprocess', type=str, default='6',
                         help='preprocessing type')
     parser.add_argument('--imagesize', type=int, default=448,
@@ -202,14 +201,10 @@ if __name__ == "__main__":
                              'inception_v3,'
                              'efficientnet_b2, efficientnetv2_s,'
                              'dnn_18,')
-
     parser.add_argument('--numworkers', type=int, default=4,  # 0 might be suitable for windows
                         help='num_workers')
     parser.add_argument('--batchsize', type=int, default=4,  # 0 might be suitable for windows
                         help='batch_size')
-    parser.add_argument('--weight', type=str,
-                        default="weights/NC_delMandN_mc_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossce.pth.tar",
-                        help='load trained model?')
     parser.add_argument('--lossfun', type=str, default=None,
                         help='loss function? if None, then default bce for multi_labels, or default ce for multi_classes.'
                              ' choose from: bce, ce, mse')
