@@ -3,15 +3,22 @@
 import numpy as np
 import pandas as pd
 import abc
-from torchvision import datasets, models, transforms
 from torch.utils.data import DataLoader, Dataset
 from torch import from_numpy
 import os
 import cv2
 import glob
 from PIL import Image
+from tqdm import tqdm
 
-# only for our EDDFS dataset
+"""
+1. The get_data_loop() is specifically designed for our EDDFS dataset.
+2. We DO NOT provide annotations for the APTOS or ODIR datasets to avoid copyright disputes. 
+    Please modify the relevant code to match the label files you have.
+3. Pre-processing is done only once; we save the images after the first run. 
+    Subsequent sub-tasks read these pre-processed images to save time, as they use the same data. 
+    You can also adapt the code for on-the-fly pre-processing.
+"""
 def get_data_loop(label_file, phase, num_classes, task):
     assert task in ["multiclass", "multilabel",
                     "DR", "AMD",
@@ -65,73 +72,56 @@ def get_data_loop(label_file, phase, num_classes, task):
     return datas, count
 
 
-class All_Datasets(Dataset, abc.ABC):
+class All_Datasets(Dataset, abc.ABC):  # abc.ABC to constrain the class as abstract
     def __init__(self, image_root, label_dir, preprocess="7",
                  meanbright=96.64, mask_path="./mask.png", phase="train", transform=None,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         """
         Args:
-            image_root: paths to the folder of original images
-            label_dir: paths to the folder of label files
-            preprocess: types of preprocess
-            meanbright: computed from the training set when creating the dataset object in "main.py" or "test.py"
-            mask_path:    a circle inscribed in a square
-            phase: 'train' or 'test'
-            transform: data augmentation
-            prepro_once: whether to restore the preprocessed images OR to preprocess every time
+            image_root: paths to the folder containing original images
+            label_dir:  paths to the folder containing label files
+            preprocess: Type of pre-processing to apply. (contrast or brightness adjustment)
+            meanbright: emprirically set according to data
+            mask_path:  a circle inscribed in a square
+            phase:      'train' or 'test' for most tasks; 'val' is additional for delMandN_mc.
+            transform:  data augmentation like rotation, resize, cropping...
         """
         self.cliplimit = cliplimit
         self.gridsize = gridsize
         self.preprocess = preprocess
         self.transform = transform
-        self.prepro_once = prepro_once
-        mask_img = cv2.imread(mask_path, 0)
+        mask_img = cv2.imread(mask_path, cv2.COLOR_BGR2GRAY)
         self.z = mask_img.shape[0] * mask_img.shape[1] - mask_img.sum() / 255.
         self.phase = phase.lower()
 
         # we merge all the images together since the test.csv and train.csv can split sub-sets
         self.label_file = os.path.join(label_dir, '{}.csv'.format(self.phase))
         self.data_folder = os.path.join(image_root, 'OriginalImages')
-         # ----- preprocess_type: [denoise: bool, contrast_enhancement: bool, brightness_balance:bool]
+        # ----- preprocess_type: [denoise: bool, contrast_enhancement: bool, brightness_balance:bool]
         self.preprocess_dict = {'0': [False, False, None], '1': [False, False, meanbright], '2': [False, True, None],
                            '3': [False, True, meanbright], '4': [True, False, None], '5': [True, False, meanbright],
                            '6': [True, True, None], '7': [True, True, meanbright]}
 
         # ---- preprocess only once and restore all the processed imgs()
-        if prepro_once:
-            if not os.path.exists(os.path.join(image_root, 'Preprocess' + preprocess)):
-                print("start Preprocessing: {}...".format(image_root))
-                os.mkdir(os.path.join(image_root, 'Preprocess' + preprocess))
-                # compute mean brightess
-                # meanbright = 0.
-                # images_number = 0
-                imgs_ori = glob.glob(os.path.join(image_root, 'OriginalImages/' + '*.JPG'))
-                imgs_ori += glob.glob(os.path.join(image_root, 'OriginalImages/' + '*.jpg'))
-                # # imgs_ori.sort()
-                # images_number += len(imgs_ori)
-                # print("- there are {} images in OriginalImages".format(images_number))
-                # # mean brightness.
-                # mask_img = cv2.imread(mask_path, 0)
-                # for img_path in imgs_ori:
-                #     # img_name = os.path.split(img_path)[-1].split('.')[0]
-                #     gray = cv2.imread(img_path, 0)
-                #     brightness = gray.sum() / (mask_img.shape[0] * mask_img.shape[1] - mask_img.sum() / 255.)
-                #     meanbright += brightness
-                # meanbright /= images_number
-                # print("- mean bright is {}".format(meanbright))
-                print("start preprocessing...and it may take several minutes...")
-                for img_path in imgs_ori:
-                    # img_name = os.path.split(img_path)[-1].split('.')[0]
-                    clahe_img = self.clahe_gridsize(img_path,
-                                               denoise=self.preprocess_dict[preprocess][0],
-                                               contrastenhancement=self.preprocess_dict[preprocess][1],
-                                               brightnessbalance=self.preprocess_dict[preprocess][2],)
-                    cv2.imwrite(os.path.join(image_root, 'Preprocess' + preprocess, os.path.split(img_path)[-1]),
-                                clahe_img)
-                print("Preprocess{} finished.\n".format(preprocess))
-            else:
-                # self.data_folder = os.path.join(image_root, 'Preprocess' + preprocess)
-                print("Preprocess{} already exists.\n".format(preprocess))
+        if not os.path.exists(os.path.join(image_root, 'Preprocess' + preprocess)):
+            print("start Preprocessing: {}...".format(image_root))
+            os.mkdir(os.path.join(image_root, 'Preprocess' + preprocess))
+            imgs_ori = glob.glob(os.path.join(image_root, 'OriginalImages/' + '*.JPG'))
+            imgs_ori += glob.glob(os.path.join(image_root, 'OriginalImages/' + '*.jpg'))
+            print("start preprocessing...and it may take several minutes...")
+            self.meanbright = meanbright
+            for img_path in tqdm(imgs_ori):
+                # img_name = os.path.split(img_path)[-1].split('.')[0]
+                clahe_img = self.clahe_gridsize(img_path,
+                                           denoise=self.preprocess_dict[preprocess][0],
+                                           contrastenhancement=self.preprocess_dict[preprocess][1],
+                                           brightnessbalance=self.preprocess_dict[preprocess][2],)
+                cv2.imwrite(os.path.join(image_root, 'Preprocess' + preprocess, os.path.split(img_path)[-1]),
+                            clahe_img)
+            print("Preprocess{} finished.\n".format(preprocess))
+        else:
+            self.data_folder = os.path.join(image_root, 'Preprocess' + preprocess)
+            print("Preprocess{} already exists.\n".format(preprocess))
 
         self.datas = []
         self.count = None
@@ -146,41 +136,23 @@ class All_Datasets(Dataset, abc.ABC):
     def __getitem__(self, idx):
         imgpath, label = self.datas[idx]
         imgpath = os.path.join(self.data_folder, imgpath)
-        if self.prepro_once:
-            image = Image.open(imgpath)
-            image.convert('RGB')
+        image = Image.open(imgpath)
+        image.convert('RGB')
 
-            if self.transform:
-                image = self.transform(image)
-
-            image = np.array(image)
-            image = np.transpose(image, (2, 0, 1))
-
-        else:  # ---- reading and preprocessing original images-----
-            clahe_img = self.clahe_gridsize(imgpath,
-                                       denoise=self.preprocess_dict[self.preprocess][0],
-                                       contrastenhancement=self.preprocess_dict[self.preprocess][1],
-                                       brightnessbalance=self.preprocess_dict[self.preprocess][2],
-                                       )
-            image = cv2.cvtColor(clahe_img, cv2.COLOR_BGR2RGB)
-            # to tensor
-            image = (image.astype(np.float32)).transpose((2, 0, 1))
-            image = from_numpy(image)/255.0
-            # augment
-            if self.transform:
-                image = self.transform(image)
-
-        return image, label
+        if self.transform:  # transform applied to PIL object
+            image = self.transform(image)
+        image = np.transpose(np.array(image), (2, 0, 1))
+        return image/255., label
 
     def clahe_gridsize(self, image_path, denoise=False,
                        contrastenhancement=False, brightnessbalance=None,
                        ):
-        """This function applies CLAHE to normal RGB images and outputs them.
-        The image is first converted to LAB format and then CLAHE is applied only to the L channel.
+        """ This function applies several adjustments to normal RGB images.
         Inputs:
           image_path: Absolute path to the image file.
+          brightnessbalance: Toggle to brightness balance or not.
+          contrastenhancement: Toggle to CLAHE or not. Note that CLAHE is applied only to the L channel.
           denoise: Toggle to denoise the image or not. Denoising is done after applying CLAHE.
-
           self.cliplimit: The pixel (high contrast) limit applied to CLAHE processing. Read more here: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_equalization/py_histogram_equalization.html
           self.gridsize: Grid/block size the image is divided into for histogram equalization.
         Returns:
@@ -189,7 +161,7 @@ class All_Datasets(Dataset, abc.ABC):
         bgr = cv2.imread(image_path)
 
         # brightness balance.
-        if brightnessbalance:
+        if brightnessbalance:  #
             gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
             brightness = gray.sum() / self.z
             bgr = np.uint8(np.minimum(bgr * brightnessbalance / brightness, 255))
@@ -211,18 +183,22 @@ class All_Datasets(Dataset, abc.ABC):
         return bgr
 
 
-# single label multi-disease without normal samples
+# single label multi-disease without normal samples,
+# we adopt a train/test/val split in this task
+# However, a train/test split is also suitable!!
 class EDDFS_delMandN_mc_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
+        self.label_file = os.path.join(label_dir, '{}_delMandN_mc.csv'.format(self.phase))
         classes_names = ['fnames', 'DR', 'AMD', 'glaucoma', 'myopia', 'RVO', 'LS', 'hyper', 'others']
         num_classes = len(classes_names) - 1  # 8
+
 
         self.get_data(num_classes, classes_names)
         print("{}: the transformers is {}\n- - - - - -\n".format(phase, self.transform))
@@ -242,11 +218,11 @@ class EDDFS_delMandN_mc_Dataset(All_Datasets):
 class EDDFS_delN_ml_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['fnames', 'DR', 'AMD', 'glaucoma', 'myopia', 'RVO', 'LS', 'hyper', 'others']
         num_classes = len(classes_names) -1  # 8
@@ -267,11 +243,11 @@ class EDDFS_delN_ml_Dataset(All_Datasets):
 class EDDFS_dr_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['fnames', 'normal', 'DR1', 'DR2', 'DR3', 'DR4']
         num_classes = len(classes_names) - 1
@@ -289,11 +265,11 @@ class EDDFS_dr_Dataset(All_Datasets):
 class EDDFS_amd_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['fnames', 'normal', 'AMD1', 'AMD2', 'AMD3']
         num_classes = len(classes_names) - 1
@@ -315,7 +291,7 @@ class EDDFS_ls_Dataset(All_Datasets):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'LS']
         num_classes = len(classes_names) - 1
@@ -337,7 +313,7 @@ class EDDFS_glaucoma_Dataset(All_Datasets):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'glaucoma']
         num_classes = len(classes_names) - 1
@@ -355,11 +331,11 @@ class EDDFS_glaucoma_Dataset(All_Datasets):
 class EDDFS_hyper_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'hyper']
         num_classes = len(classes_names) - 1
@@ -377,11 +353,11 @@ class EDDFS_hyper_Dataset(All_Datasets):
 class EDDFS_myopia_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'myopia']
         num_classes = len(classes_names) - 1
@@ -399,11 +375,11 @@ class EDDFS_myopia_Dataset(All_Datasets):
 class EDDFS_rvo_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'RVO']
         num_classes = len(classes_names) - 1
@@ -421,11 +397,11 @@ class EDDFS_rvo_Dataset(All_Datasets):
 class EDDFS_other_Dataset(All_Datasets):
     def __init__(self, image_root, label_dir, preprocess,
                  meanbright, mask_path, phase, transform,
-                 cliplimit=2, gridsize=8, prepro_once=True):
+                 cliplimit=2, gridsize=8):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once)
+                         cliplimit, gridsize)
 
         classes_names = ['normal', 'others']
         num_classes = len(classes_names) - 1
@@ -455,7 +431,7 @@ class APTOS2019_Dataset(All_Datasets):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once=False)
+                         cliplimit, gridsize)
 
         self.preprocess = preprocess
         self.transform = transform
@@ -506,7 +482,7 @@ class ODIR_delMandN_mc_Dataset(All_Datasets):
         super().__init__(image_root, label_dir, preprocess,
                          meanbright, mask_path,
                          phase, transform,
-                         cliplimit, gridsize, prepro_once=False)
+                         cliplimit, gridsize)
         self.image_root = image_root
         self.label_dir = label_dir
         if phase=="train":
