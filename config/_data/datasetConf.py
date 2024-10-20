@@ -20,6 +20,24 @@ class EDDFS_general(abc.ABC):
     def print_info(self):
         pass
 
+    @staticmethod
+    def GET_mBRIGHT():
+        mask_img = cv2.imread("/Users/yezi/Documents/torchCode/CoAtt_eddfs/mask.png", cv2.IMREAD_GRAYSCALE)
+        Z = mask_img.shape[0] * mask_img.shape[1] - mask_img.sum() / 255.
+        imgs_ori = glob.glob(os.path.join(EDDFS_general.IMG_ROOT, 'OriginalImages/*.jpg'))
+        imgs_ori += glob.glob(os.path.join(EDDFS_general.IMG_ROOT, 'OriginalImages/*.JPG'))
+        imgs_ori.sort()
+        images_number = len(imgs_ori)
+        meanbright = 0.
+
+        for img_path in tqdm(imgs_ori):
+            gray = cv2.imread(img_path, 0)
+            brightness = gray.sum() / Z
+            meanbright += brightness
+        meanbright /= images_number
+        print(meanbright)
+        # EDDFS_general.MEAN_BRIGHTNESS = meanbright
+
 
 # multi-label multi-disease without normal samples
 class EDDFS_delN_ml_conf(EDDFS_general):
@@ -40,7 +58,7 @@ class EDDFS_delMandN_mc_conf(EDDFS_general):
         super().__init__()
         self.task = "multi_classes"
         self.classes_num = 8
-        self.classes_names = ['DR', 'AMD', 'glaucoma', 'myo', 'rvopia', 'LS', 'hyper', 'others']
+        self.classes_names = ['DR', 'AMD', 'glaucoma', 'myo', 'rvo', 'LS', 'hyper', 'others']
         self.print_info()
 
     def print_info(self):
@@ -52,7 +70,7 @@ class EDDFS_amd_conf(EDDFS_general):
         super().__init__()
         self.task = "multi_classes"
         self.classes_num = 8
-        self.classes_names = ['DR', 'AMD', 'glaucoma', 'myo', 'rvopia', 'LS', 'hyper', 'others']
+        self.classes_names = ['DR', 'AMD', 'glaucoma', 'myo', 'rvo', 'LS', 'hyper', 'others']
         self.print_info()
     # task = "multi_classes"
     # classes_num = 4
@@ -158,3 +176,7 @@ class ODIR_delMandN_mc_conf(object):
     LABEL_DIR = './datas/ODIR_single/'
     # mean_bright = mean_bright(image_root + "Training_Set/Images", img_end="jpg")
     MEAN_BRIGHTNESS = 102  # 301.73
+
+
+if __name__=="__main__":
+    EDDFS_general.GET_mBRIGHT()
