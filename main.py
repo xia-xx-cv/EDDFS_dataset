@@ -1,22 +1,19 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
 import numpy as np
-
-np.set_printoptions(linewidth=100)
 import random
-import torchvision
+import importlib
 import torch
+from torch.utils.data import DataLoader, WeightedRandomSampler
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 from torch.optim import lr_scheduler
 from torchvision import transforms
-
-from torch.utils.data import DataLoader, WeightedRandomSampler
 import argparse
 import warnings
-
+np.set_printoptions(linewidth=100)
 warnings.filterwarnings('ignore')
 
 from config._data.datasetConf import EDDFS_delMandN_mc_conf, EDDFS_amd_conf, \
@@ -57,7 +54,7 @@ if __name__ == "__main__":
     parser.add_argument('--useGPU', type=int, default=0,
                         help='-1: "cpu"; 0, 1, ...: "cuda:x";')
     parser.add_argument('--seed', type=int, default=2022)
-    parser.add_argument('--dataset', type=str, default="EDDFS_dr",
+    parser.add_argument('--dataset', type=str, default="EDDFS_delN_ml",
                         help=all_data_infor)
     parser.add_argument('--preprocess', type=str, default='7',
                         help='preprocessing type')
@@ -73,7 +70,7 @@ if __name__ == "__main__":
                              'efficientnet_b2, efficientnetv2_s,'
                              'dnn_18,')
 
-    parser.add_argument('--epochs', type=int, default=51,
+    parser.add_argument('--epochs', type=int, default=1,
                         help='num of epochs')
     parser.add_argument('--eval_interval', type=int, default=10,
                         help='evalutation interval')
@@ -93,7 +90,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--pretrained', type=str2bool, default=True,
                         help='load pretrained model?')
-    parser.add_argument('--lossfun', type=str, default=None,
+    parser.add_argument('--lossfun', type=str, default='bce',
                         help='loss function? if None, then default bce for multi_labels, '
                              'or default ce for multi_classes.'
                              ' choose from: bce, ce, mse, focalloss')
@@ -112,8 +109,8 @@ if __name__ == "__main__":
     print(run_id)
 
     if args.useGPU >= 0:
-        device = torch.device("cuda:{}".format(args.useGPU))
-        # device = torch.device("mps")
+        # device = torch.device("cuda:{}".format(args.useGPU))
+        device = torch.device("mps")
     else:
         device = torch.device("cpu")
 
@@ -126,50 +123,34 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    exec('opt_dataset = {}_conf()'.format(args.dataset))  # updated on 20240701 for simplicity
-    # if args.dataset == "EDDFS_delN_ml":  # multi-label multi-disease cls without normal samples
-    #     opt_dataset = EDDFS_delN_ml_conf()
-    # elif args.dataset == "EDDFS_delMandN_mc":  # single-label multi-disease cls without normal samples
-    #     opt_dataset = EDDFS_delMandN_mc_conf()
-    # elif args.dataset == "EDDFS_amd":  # AMD grading
-    #     opt_dataset = EDDFS_amd_conf()
-    # elif args.dataset == "EDDFS_dr":  # DR grading
-    #     opt_dataset = EDDFS_dr_conf()
-    # elif args.dataset == "EDDFS_glaucoma":  # glaucoma identification
-    #     opt_dataset = EDDFS_glaucoma_conf()
-    # elif args.dataset == "EDDFS_myopia":  # pathological myopia identification
-    #     opt_dataset = EDDFS_myopia_conf()
-    # elif args.dataset == "EDDFS_rvo":  # RVO identification
-    #     opt_dataset = EDDFS_rvo_conf()
-    # elif args.dataset == "EDDFS_ls":  # Laser photocoagulation identification
-    #     opt_dataset = EDDFS_ls_conf()
-    # elif args.dataset == "EDDFS_hyper":  # hypertension retinopathy identification
-    #     opt_dataset = EDDFS_hyper_conf()
-    # elif args.dataset == "EDDFS_other":  # others or not identification
-    #     opt_dataset = EDDFS_other_conf()
-    # elif args.dataset == "ODIR_delMandN_mc":  # single-label multi-disease cls without normal samples
-    #     opt_dataset = ODIR_delMandN_mc_conf  # on OIA-ODIR dataset
-    # elif args.dataset == "APTOS2019":
-    #     opt_dataset = APTOS2019_conf
-    # else:
-    #     raise ValueError("args.dataset is not supported!!!")
-
-    loc = {"create_model": convnext_tiny()}  # as a marker
-    glb = {}
-
+    dataset_map = {
+        "EDDFS_delN_ml": EDDFS_delN_ml_conf,
+        "EDDFS_delMandN_mc": EDDFS_delMandN_mc_conf,
+        "EDDFS_amd": EDDFS_amd_conf,
+        'EDDFS_dr': EDDFS_dr_conf,
+        'EDDFS_glaucoma': EDDFS_glaucoma_conf,
+        'EDDFS_myopia': EDDFS_myopia_conf,
+        'EDDFS_rvo': EDDFS_rvo_conf,  # binary classification,
+        'EDDFS_ls': EDDFS_ls_conf,
+        'EDDFS_hyper': EDDFS_hyper_conf,
+        'EDDFS_other': EDDFS_other_conf,  # but we marked them as multi_classes for simplicity
+        'ODIR_delMandN_mc': ODIR_delMandN_mc_conf,
+        'APTOS2019': APTOS2019_conf,
+    }
+    dataset_module = importlib.import_module("datasets")  # Updated for simplicity and safety
+    dataset = getattr(dataset_module, args.dataset + "_Dataset")
+    opt_dataset = dataset_map[args.dataset]()  # Updated for simplicity and safety
     classes_num = opt_dataset.classes_num
     classes_names = opt_dataset.classes_names
     image_root = opt_dataset.IMG_ROOT
-    label_dir = opt_dataset.LABEL_DIR
     image_size = [args.imagesize, args.imagesize]
-    net_name = args.net
-    batchsize = args.batchsize
+    label_dir = opt_dataset.LABEL_DIR
 
-    exec("from models import {} as create_model".format(net_name), glb, loc)
-    create_model = loc["create_model"]
-    model = create_model(num_classes=classes_num, pretrained=args.pretrained)
-    exec("from datasets import {} as dataset".format(args.dataset + "_Dataset"), glb, loc)
-    dataset = loc["dataset"]
+    # creating model
+    module = importlib.import_module("models")  # Updated for simplicity and safety
+    create_model = getattr(module, args.net)
+    model = create_model(num_classes=classes_num, pretrained=True)
+    model.to(device=device)
 
     if args.optimizerfun is None:
         optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0.005)
@@ -181,11 +162,10 @@ if __name__ == "__main__":
         else:
             raise ValueError("main.py  args.optimizerfun is not allowed!!!")
 
-    resume = args.resume
-    if resume:
-        if os.path.isfile(resume):
-            print("=> resume is True. ====\n====loading checkpoint '{}'".format(resume))
-            checkpoint = torch.load(resume, map_location=device)
+    if args.resume:
+        if os.path.isfile(args.resume):
+            print("=> resume is True. ====\n====loading checkpoint '{}'".format(args.resume))
+            checkpoint = torch.load(args.resume, map_location=device)
             start_epoch = checkpoint['epoch']
             start_step = checkpoint['step']
             model.load_state_dict(checkpoint['state_dict'])
@@ -194,9 +174,9 @@ if __name__ == "__main__":
                 for k, v in state.items():
                     if torch.is_tensor(v):
                         state[k] = v.to(device)
-            print('Model loaded from {}'.format(resume))
+            print('Model loaded from {}'.format(args.resume))
         else:
-            raise ValueError(" ??? no checkpoint found at '{}'".format(resume))
+            raise ValueError(" ??? no checkpoint found at '{}'".format(args.resume))
     else:
         start_epoch = 0
         start_step = 0
@@ -219,7 +199,7 @@ if __name__ == "__main__":
                                transform=transforms.Compose([
                                    transforms.Resize(size=image_size)
                                ]))
-        test_loader = DataLoader(test_dataset, batchsize, shuffle=False, num_workers=args.numworkers)
+        test_loader = DataLoader(test_dataset, args.batchsize, shuffle=False, num_workers=args.numworkers)
     else:
         eval_dataset = dataset(image_root, label_dir, preprocess=str(args.preprocess),
                                meanbright=opt_dataset.MEAN_BRIGHTNESS, mask_path='mask.png', phase="test",
@@ -227,7 +207,7 @@ if __name__ == "__main__":
                                    transforms.Resize(size=image_size)
                                ]))
         test_loader = None
-    eval_loader = DataLoader(eval_dataset, batchsize, shuffle=False, num_workers=args.numworkers)
+    eval_loader = DataLoader(eval_dataset, args.batchsize, shuffle=False, num_workers=args.numworkers)
 
     if opt_dataset.task == "multi_labels" and args.balanceSample:
         args.balanceSample = False
@@ -244,10 +224,10 @@ if __name__ == "__main__":
         train_sampleweights = torch.tensor([train_weights[i] for i in train_label_list], dtype=torch.float)
         sampler = WeightedRandomSampler(train_sampleweights,
                                         len(train_sampleweights))  # weights for all the samples
-        train_loader = DataLoader(train_dataset, batchsize, sampler=sampler,
+        train_loader = DataLoader(train_dataset, args.batchsize, sampler=sampler,
                                   num_workers=args.numworkers, drop_last=True)
     else:
-        train_loader = DataLoader(train_dataset, batchsize, shuffle=True,
+        train_loader = DataLoader(train_dataset, args.batchsize, shuffle=True,
                                   num_workers=args.numworkers, drop_last=True)
 
     scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=0)
@@ -285,7 +265,7 @@ if __name__ == "__main__":
 
     train_model(model, train_loader, eval_loader,
                 criterion, optimizer, scheduler,
-                batchsize, num_epochs=args.epochs,
+                args.batchsize, num_epochs=args.epochs,
                 start_epoch=start_epoch, start_step=start_step,
                 task=opt_dataset.task, eval_interval=args.eval_interval,
                 run_id=run_id,
