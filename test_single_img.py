@@ -40,7 +40,7 @@ def str2bool(v):
 
 class Single_Img(Dataset):
     def __init__(self, image_root, preprocess="7",
-                 meanbright=55., transform=None,
+                 meanbright=88., transform=None,
                  cliplimit=2, gridsize=8):
         self.image_root = image_root
         self.cliplimit = cliplimit
@@ -89,8 +89,8 @@ class Single_Img(Dataset):
         # brightness balance.
         if brightnessbalance:  #
             gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-            brightness = gray.sum() / self.z
-            bgr = np.uint8(np.minimum(bgr / brightness, 255))
+            brightness = gray.sum() * s / self.z
+            bgr = np.uint8(np.minimum(bgr * brightnessbalance / brightness, 255))
 
         if contrastenhancement:
             # illumination correction and contrast enhancement.
