@@ -39,12 +39,8 @@ def str2bool(v):
 
 
 class Single_Img(Dataset):
-    mask_img = cv2.imread("./mask.png", 0)
-    Z = mask_img.shape[0] * mask_img.shape[1] - mask_img.sum() / 255.
-    # meanbright=97.44 on a Mac M3 pro and 88 on an Ubintu,
-    # but it seems not heavily affect the results
     def __init__(self, image_root, preprocess="7",
-                 meanbright=97, transform=None,
+                 meanbright=55., transform=None,
                  cliplimit=2, gridsize=8):
         self.image_root = image_root
         self.cliplimit = cliplimit
@@ -56,6 +52,9 @@ class Single_Img(Dataset):
                                 '3': [False, True, meanbright], '4': [True, False, None],
                                 '5': [True, False, meanbright],
                                 '6': [True, True, None], '7': [True, True, meanbright]}
+        mask_img = cv2.imread("./mask.png", 0)
+        self.z = mask_img.shape[0] * mask_img.shape[1] - mask_img.sum() / 255.
+        self.size = mask_img.shape[0] * mask_img.shape[1]
         self.datas = []
         names = os.listdir(self.image_root)
         names.sort()
@@ -86,11 +85,12 @@ class Single_Img(Dataset):
                        contrastenhancement=False, brightnessbalance=None,
                        ):
         bgr = cv2.imread(image_path)
+        s = self.size / (bgr.shape[0]*bgr.shape[1])  # scaling according to img size
         # brightness balance.
-        if brightnessbalance:
+        if brightnessbalance:  #
             gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-            brightness = gray.sum() / Single_Img.Z
-            bgr = np.uint8(np.minimum(bgr * brightnessbalance / brightness, 255))
+            brightness = gray.sum() / self.z
+            bgr = np.uint8(np.minimum(bgr / brightness, 255))
 
         if contrastenhancement:
             # illumination correction and contrast enhancement.
@@ -140,13 +140,12 @@ def main(args):
     classes_num = opt_dataset.classes_num
     classes_names = opt_dataset.classes_names
     image_root = "/Users/yezi/Documents/torchCode/CoAtt_eddfs/datas/single_imgs/"
-    image_size = args.imagesize
-    net_name = args.net
     loc = {"create_model": resnet18()}  # as a marker
     glb = {}
-    exec("from models import {} as create_model".format(net_name), glb, loc)
+    exec("from models import {} as create_model".format(args.net), glb, loc)
     create_model = loc["create_model"]
     model = create_model(num_classes=classes_num, pretrained=True)
+    model.eval()
 
     if args.weight:
         if os.path.isfile(args.weight):
@@ -161,30 +160,30 @@ def main(args):
     eval_dataset = Single_Img(image_root, preprocess=str(args.preprocess),
                               meanbright=opt_dataset.MEAN_BRIGHTNESS,
                               transform=transforms.Compose([
-                                  transforms.Resize(size=image_size)])
+                                  transforms.Resize(size=args.imagesize)])
                               )
     eval_loader = DataLoader(eval_dataset, args.batchsize, shuffle=False)
     model.to(device=device)
     pred_list = torch.empty(0, device="cpu")
-    print(classes_names)
+    print('\t'.join(classes_names))
+    # inference
     with torch.no_grad():
         for inputs, _ in (eval_loader):  # without GT
             inputs = inputs.to(device=device, dtype=torch.float)
             output = model(inputs)
             if task == "multi_classes":
-                # out_list.append(output.softmax(dim=1))
-                result_cls = torch.max(output, dim=1)[1]
-                # pred_list = torch.cat((pred_list, result_cls), dim=0)
-            else:  # task == "multi_labels":
-                result_cls = torch.round(output.sigmoid())
+                result_cls = torch.max(output.softmax(dim=1), dim=1)[1]
+            else:  # "multi_label case":
+        ## When testing with new samples different from those in the test set, the threshold may need adjustment.
+                result_cls = (output.sigmoid() >= args.thres) + 0.0  # convert bool to float
             pred_list = torch.cat((pred_list, result_cls.cpu()), dim=0)
-
+    # results
     for (name, out) in zip(eval_dataset.datas, pred_list):
         if task == "multi_classes":
             print('{}:{}'.format(name.split('.')[0], classes_names[int(out)]))
         else:
             masked_result = [s if mask == 1 else '-' for s, mask in zip(classes_names, out)]
-            print('{}:{}'.format(name.split('.')[0], masked_result))
+            print('{}:{}'.format(name.split('.')[0] + '\t', '\t'.join(masked_result)))
     print("========='=== finished test==============")
 
 
@@ -202,30 +201,28 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', type=str, default="EDDFS_delMandN_mc",
                         help=all_data_infor)
     parser.add_argument('--weight', type=str,
-                        # default="weights/EDDFS_delN_ml_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossbce.pth.tar",
                         default="weights/EDDFS_delMandN_mc_7_448-parallelnet_v2_withWeighted_tiny_e51_bFalse_bs32-l9e-05_0.2-preFalse-lossce.pth.tar",
-                        help='load trained model?')
+                        help='the trained weights path')
+    parser.add_argument('--thres', type=float, default=0.4,
+                        help='Threshold of diagnosis, only applicable in the multi-label case.')
 
     parser.add_argument('--useGPU', type=int, default=0,
                         help='-1: "cpu"; 0, 1, ...: "cuda:x";')
     parser.add_argument('--seed', type=int, default=2022)
-    parser.add_argument('--preprocess', type=str, default='7',
-                        help='preprocessing type')
+    parser.add_argument('--preprocess', type=str, default='2',
+                        help='Preprocessing type index 0~7.')
     parser.add_argument('--imagesize', type=int, default=448,
                         help='image size')
-    parser.add_argument('--batchsize', type=int, default=1,
-                        help='batch_size')
+    parser.add_argument('--batchsize', type=int, default=10,
+                        help='batch size')
     parser.add_argument('--net', type=str, default='coattnet_v2_withWeighted_tiny',
-                        help='coattnet_v2_withWeighted_tiny'  # ours
+                        help='coattnet_v2_withWeighted_tiny'   # ours
                              'resnet18,'
                              'resnext50_32x4d,'
                              'densenet121,'
                              'inception_v3,'
-                             'efficientnet_b2, efficientnetv2_s,'
+                             'efficientnet_b2 or efficientnetv2_s,'
                              'dnn_18,')
     args = parser.parse_args()
 
-    try:
-        main(args)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    main(args)
